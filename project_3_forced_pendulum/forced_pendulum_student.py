@@ -11,7 +11,7 @@ def forced_pendulum_ode(t, state, l, g, C, Omega):
     """
     theta, omega = state
     dtheta_dt = omega
-    domega_dt = -(g / l) * np.sin(theta) + C * np.cos(Omega * t)
+    domega_dt = -(g / l) * np.sin(theta) + C * np.cos(Omega * t)*np.sin(Omega*t)
     return [dtheta_dt, domega_dt]
 
 
@@ -20,17 +20,10 @@ def solve_pendulum(l=0.1, g=9.81, C=2, Omega=5, t_span=(0, 100), y0=[0, 0]):
     求解受迫单摆运动方程
     返回: t, theta
     """
-    t_eval = np.linspace(t_span[0], t_span[1], 2000)
-
-    # 使用solve_ivp求解
-    sol = solve_ivp(
-        lambda t, y: forced_pendulum_ode(t, y, l, g, C, Omega),
-        t_span,
-        y0,
-        t_eval=t_eval,
-        rtol=1e-6,
-        atol=1e-9
-    )
+    sol = solve_ivp(forced_pendulum_ode, t_span, y0,
+                    args=(l, g, C, Omega),
+                    t_eval=np.linspace(t_span[0], t_span[1], 2000),
+                    rtol=1e-6, atol=1e-9)
     return sol.t, sol.y[0]
 
 
