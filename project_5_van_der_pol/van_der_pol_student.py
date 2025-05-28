@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Tuple, Callable, List
 
-def van_der_pol_ode(state: np.ndarray, t: float, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
+def van_der_pol_ode(t: float, state: np.ndarray, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
     """
     van der Pol振子的一阶微分方程组。
     
@@ -34,11 +34,11 @@ def rk4_step(ode_func: Callable, state: np.ndarray, t: float, dt: float, **kwarg
     返回:
         np.ndarray: 下一步的状态
     """
-    k1 = ode_func(state, t, **kwargs)
-    k2 = ode_func(state + 0.5 * dt * k1, t + 0.5 * dt, **kwargs)
-    k3 = ode_func(state + 0.5 * dt * k2, t + 0.5 * dt, **kwargs)
-    k4 = ode_func(state + dt * k3, t + dt, **kwargs)
-
+    k1 = ode_func(t, state, **kwargs)
+    k2 = ode_func(t + 0.5 * dt, state + 0.5 * dt * k1, **kwargs)
+    k3 = ode_func(t + 0.5 * dt, state + 0.5 * dt * k2, **kwargs)
+    k4 = ode_func(t + dt, state + dt * k3, **kwargs)
+    
     next_state = state + (dt / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
     return next_state
 
@@ -61,13 +61,13 @@ def solve_ode(ode_func: Callable, initial_state: np.ndarray, t_span: Tuple[float
     num_steps = int((t_end - t_start) / dt) + 1
     t_points = np.linspace(t_start, t_end, num_steps)
     state_dim = len(initial_state)
-
+    
     states = np.zeros((num_steps, state_dim))
     states[0] = initial_state
-
+    
     for i in range(num_steps - 1):
-        states[i + 1] = rk4_step(ode_func, states[i], t_points[i], dt, **kwargs)
-
+        states[i+1] = rk4_step(ode_func, t_points[i], states[i], dt, **kwargs)
+    
     return t_points, states
 
 def plot_time_evolution(t: np.ndarray, states: np.ndarray, title: str) -> None:
