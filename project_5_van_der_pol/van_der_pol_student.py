@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Tuple, Callable, List
 
-def van_der_pol_ode(state: np.ndarray, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
+def van_der_pol_ode(state: np.ndarray, t: float, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
     """
     van der Pol振子的一阶微分方程组。
     
