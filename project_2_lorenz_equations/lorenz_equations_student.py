@@ -143,6 +143,13 @@ def lorenz_system(state, sigma=10.0, r=28.0, b=8/3):
     """兼容旧版接口的洛伦兹系统函数"""
     return LorenzSystem(sigma, r, b).get_derivatives(0, state)
 
+def solve_lorenz_equations(sigma=10.0, r=28.0, b=8/3,
+                          x0=0.1, y0=0.1, z0=0.1,
+                          t_span=(0, 50), dt=0.01):
+    """兼容旧版接口的求解函数"""
+    system = LorenzSystem(sigma, r, b)
+    return system.solve([x0, y0, z0], t_span, dt)
+
 
 def main():
     """主函数，执行系统求解与分析"""
