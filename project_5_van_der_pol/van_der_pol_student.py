@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 from typing import Tuple, Callable
 plt.rcParams['font.sans-serif']=['KaiTi']
 
-def van_der_pol_ode(state: np.ndarray, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
+def van_der_pol_ode(state: np.ndarray, t: float, mu: float = 1.0, omega: float = 1.0) -> np.ndarray:
     """
     van der Pol振子的一阶微分方程组。
     
     参数:
         state: np.ndarray, 形状为(2,)的数组，包含位置x和速度v
-        t: float, 当前时间（在这个系统中实际上没有使用）
+        t: float, 当前时间
         mu: float, 非线性阻尼参数
         omega: float, 角频率
     
@@ -18,31 +18,31 @@ def van_der_pol_ode(state: np.ndarray, mu: float = 1.0, omega: float = 1.0) -> n
     """
     x, v = state
     dx_dt = v
-    dv_dt = mu * (1 - x ** 2) * v - omega ** 2 * x
+    dv_dt = mu * (1 - x**2) * v - omega**2 * x
     return np.array([dx_dt, dv_dt])
 
-def rk4_step(ode_func: Callable, state: np.ndarray, t: float, dt: float, **kwargs) -> np.ndarray:
+def rk4_step(ode_func: Callable, t: float, state: np.ndarray, dt: float, **kwargs) -> np.ndarray:
     """
     使用四阶龙格-库塔方法进行一步数值积分。
-
+    
     参数:
         ode_func: Callable, 微分方程函数
-        state: np.ndarray, 当前状态
         t: float, 当前时间
+        state: np.ndarray, 当前状态
         dt: float, 时间步长
         **kwargs: 传递给ode_func的额外参数
-
+    
     返回:
         np.ndarray: 下一步的状态
     """
+    # 调整参数顺序，确保正确传递给ode_func
     k1 = ode_func(state, t, **kwargs)
     k2 = ode_func(state + 0.5 * dt * k1, t + 0.5 * dt, **kwargs)
     k3 = ode_func(state + 0.5 * dt * k2, t + 0.5 * dt, **kwargs)
     k4 = ode_func(state + dt * k3, t + dt, **kwargs)
-
+    
     next_state = state + (dt / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
     return next_state
-
 
 def solve_ode(ode_func: Callable, initial_state: np.ndarray, t_span: Tuple[float, float],
               dt: float, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
